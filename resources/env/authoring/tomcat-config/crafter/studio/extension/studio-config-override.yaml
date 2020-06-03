@@ -5,10 +5,10 @@
 studio.repo.basePath: ${env:CRAFTER_DATA_DIR}/repos
 # Sandbox git repository branch for every site
 # studio.repo.siteSandboxBranch: master
-# If not using environment-config.xml, environments are configured here
-# Git repository branch for the `live` environment, default "live"
+# Git repository branch for publishing targets are configured here
+# Git repository branch for the `live` publishing target, default "live"
 # studio.repo.published.live: live
-# Git repository branch for the `staging` environment, default "staging"
+# Git repository branch for the `staging` publishing target, default "staging"
 # studio.repo.published.staging: staging
 
 ############################################################
@@ -27,7 +27,7 @@ studio.configuration.management.authorizationToken: ${env:STUDIO_MANAGEMENT_TOKE
 # Preview engine management authorization token.
 studio.configuration.management.previewAuthorizationToken: ${env:ENGINE_MANAGEMENT_TOKEN}
 # Protected URLs with preview engine management authorization token.
-# Coma separated list of preview engine urls
+# Comma separated list of preview engine urls
 studio.configuration.management.previewProtectedUrls: >-
   /api/1/monitoring/log.json,
   /api/1/monitoring/memory.json,
@@ -117,7 +117,7 @@ studio.db.socket: /tmp/MariaDB4j.${env:MARIADB_PORT}.sock
     # Authentication header for secure key
     # secureKeyHeader: secure_key
     # Authentication headers secure key that is expected to match secure key value from headers
-    # Typically this is placed in the header by the authentication agent, e.g. Apache mod_mellon
+    # Typically this is placed in the header by the authentication agent
     # secureKeyHeaderValue: secure
     # Authentication header for username
     # usernameHeader: username
@@ -136,7 +136,7 @@ studio.db.socket: /tmp/MariaDB4j.${env:MARIADB_PORT}.sock
     # If logout is enabled for headers authenticated users (SSO), set the endpoint of the SP or IdP logout, which should
     # be called after local logout. The {baseUrl} macro is provided so that the browser is redirected back to Studio
     # after logout (https://STUDIO_SERVER:STUDIO_PORT/studio)
-    # logoutUrl: /mellon/logout?ReturnTo={baseUrl}
+    # logoutUrl: /YOUR_DOMAIN/logout?ReturnTo={baseUrl}
   # Authentication provider type
   # - provider: LDAP
     # Authentication via LDAP enabled
@@ -172,6 +172,9 @@ studio.db.socket: /tmp/MariaDB4j.${env:MARIADB_PORT}.sock
 studio.security.encryption.key: ${env:CRAFTER_ENCRYPTION_KEY}
 # The salt used for encryption of configuration properties
 studio.security.encryption.salt: ${env:CRAFTER_ENCRYPTION_SALT}
+
+# Defines name used for environment specific configuration. It is used for environment overrides in studio. Default value is default.
+studio.configuration.environment.active: ${env:CRAFTER_ENVIRONMENT}
 
 ##################################################
 ##        SMTP Configuration (Email)            ##
@@ -262,8 +265,6 @@ studio.mail.port: ${env:MAIL_PORT}
 # studio.cors.credentials: true
 # Value for the Access-Control-Max-Age header
 # studio.cors.maxage: -1
-# The active environment for multi environment configuration, e.g. qa, prod, dev
-# studio.configuration.environment.active: ENV
 
 ################################################################
 ##                           Search                           ##

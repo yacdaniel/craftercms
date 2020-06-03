@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2007-2019 Crafter Software Corporation. All Rights Reserved.
+ * Copyright (C) 2007-2020 Crafter Software Corporation. All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU General Public License version 3 as published by
+ * the Free Software Foundation.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -61,8 +60,10 @@ class RecreateSolrCoresHook implements PostUpgradeHook {
         def newCoreName = environment == "authoring" ? "${siteName}-preview" : siteName
         def deployerEnv = environment == "authoring" ? 'preview' : 'default'
 
+        // delete existing core from 3.0.x
         deleteCore(oldCoreName)
-        createCore(newCoreName)
+
+        // reindex using the new core created by studio
         reindexContent(siteName, deployerEnv)
     }
 
@@ -82,27 +83,6 @@ class RecreateSolrCoresHook implements PostUpgradeHook {
             }
         }
     }
-
-    private void createCore(String coreName) {
-        def httpClient = configure {
-            request.uri = getTomcatUrl()
-        }
-
-        httpClient.post {
-            request.uri.path = "/crafter-search/api/2/admin/index/create"
-            request.contentType = 'application/json'
-            request.body = [
-                    id: coreName
-            ]
-            response.success { fs ->
-                println "Solr core '${coreName}' created successfully"
-            }
-            response.failure { fs, body ->
-                throw new UpgradeException("Error while creating Solr core '${coreName}': ${body.message}")
-            }
-        }
-    }
-
 
     private void reindexContent(String siteName, String deployerEnv) {
         def httpClient = configure {

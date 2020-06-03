@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# Copyright (C) 2007-2019 Crafter Software Corporation. All Rights Reserved.
+# Copyright (C) 2007-2020 Crafter Software Corporation. All Rights Reserved.
 #
 # This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# it under the terms of the GNU General Public License version 3 as published by
+# the Free Software Foundation.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -92,7 +91,7 @@ export MARIADB_SCHEMA=${MARIADB_SCHEMA:="crafter"}
 export MARIADB_HOME=${MARIADB_HOME:="$CRAFTER_BIN_DIR/dbms"}
 export MARIADB_DATA_DIR=${MARIADB_DATA_DIR:="$CRAFTER_DATA_DIR/db"}
 export MARIADB_ROOT_USER=${MARIADB_ROOT_USER:="root"}
-export MARIADB_ROOT_PASSWD=${MARIADB_ROOT_PASSWD:=""}
+export MARIADB_ROOT_PASSWD=${MARIADB_ROOT_PASSWD:="root"}
 export MARIADB_USER=${MARIADB_USER:="crafter"}
 export MARIADB_PASSWD=${MARIADB_PASSWD:="crafter"}
 
@@ -130,5 +129,8 @@ export SOCIAL_MANAGEMENT_TOKEN=${SOCIAL_MANAGEMENT_TOKEN:="defaultManagementToke
 export CRAFTER_ENCRYPTION_KEY=${CRAFTER_ENCRYPTION_KEY:="default_encryption_key"}
 export CRAFTER_ENCRYPTION_SALT=${CRAFTER_ENCRYPTION_SALT:="default_encryption_salt"}
 
-# -------------------- Cluster variables --------------------
-export CLUSTER_NODE_ADDRESS=${CLUSTER_NODE_ADDRESS:="127.0.0.1"}
+# -------------------- Cluster variables -------------------
+export CLUSTER_NODE_ADDRESS=${CLUSTER_NODE_ADDRESS:="$(hostname -i)"}
+
+# -------------------- Configuration variables --------------------
+export CRAFTER_ENVIRONMENT=${CRAFTER_ENVIRONMENT:=default}
