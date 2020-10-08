@@ -42,7 +42,7 @@
 
         <!-- Versions -->
         <commons.lang3.version>3.5</commons.lang3.version>
-        <commons.text.version>1.1</commons.text.version>
+        <commons.text.version>1.9</commons.text.version>
         <commons.io.version>2.5</commons.io.version>
     </properties>
 
@@ -113,8 +113,7 @@
                         <configuration>
                             <minimizeJar>true</minimizeJar>
                             <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>org.craftercms.bundle.utils.BundleUtils</mainClass>
                                 </transformer>
                             </transformers>
