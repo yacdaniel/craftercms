@@ -22,6 +22,7 @@
 export CRAFTER_LOGS_DIR=${CRAFTER_LOGS_DIR:="$CRAFTER_HOME/logs"}
 export CRAFTER_DATA_DIR=${CRAFTER_DATA_DIR:="$CRAFTER_HOME/data"}
 export CRAFTER_TEMP_DIR=${CRAFTER_TEMP_DIR:="$CRAFTER_HOME/temp"}
+export CRAFTER_BACKUPS_DIR=${CRAFTER_BACKUPS_DIR:="$CRAFTER_HOME/backups"}
 
 # -------------------- Hosts and ports --------------------
 export MAIL_HOST=${MAIL_HOST:="localhost"}
@@ -94,6 +95,7 @@ export MARIADB_ROOT_USER=${MARIADB_ROOT_USER:="root"}
 export MARIADB_ROOT_PASSWD=${MARIADB_ROOT_PASSWD:="root"}
 export MARIADB_USER=${MARIADB_USER:="crafter"}
 export MARIADB_PASSWD=${MARIADB_PASSWD:="crafter"}
+export MARIADB_SOCKET_TIMEOUT=${MARIADB_SOCKET_TIMEOUT:="60000"}
 
 case "$(uname -s)" in
   Darwin)
@@ -126,8 +128,13 @@ export PROFILE_MANAGEMENT_TOKEN=${PROFILE_MANAGEMENT_TOKEN:="defaultManagementTo
 export SOCIAL_MANAGEMENT_TOKEN=${SOCIAL_MANAGEMENT_TOKEN:="defaultManagementToken"}
 
 # -------------------- Encryption variables --------------------
+# These variables are used to encrypt and decrypt values inside the configuration files.
 export CRAFTER_ENCRYPTION_KEY=${CRAFTER_ENCRYPTION_KEY:="default_encryption_key"}
 export CRAFTER_ENCRYPTION_SALT=${CRAFTER_ENCRYPTION_SALT:="default_encryption_salt"}
+
+# These variables are used by Studio to encrypt and decrypt values in the database.
+export CRAFTER_SYSTEM_ENCRYPTION_KEY=${CRAFTER_SYSTEM_ENCRYPTION_KEY:="zEtRii1jWUuUUB0W"}
+export CRAFTER_SYSTEM_ENCRYPTION_SALT=${CRAFTER_SYSTEM_ENCRYPTION_SALT:="DgGN9xhq3GOn6zxg"}
 
 # -------------------- Cluster variables -------------------
 export CLUSTER_NODE_ADDRESS=${CLUSTER_NODE_ADDRESS:="$(hostname -i)"}

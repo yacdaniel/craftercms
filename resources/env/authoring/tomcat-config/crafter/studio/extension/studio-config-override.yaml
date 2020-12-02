@@ -64,7 +64,7 @@ studio.preview.search.deleteUrl: ${env:SEARCH_URL}/api/2/admin/index/delete/{sit
 # Crafter DB schema name
 studio.db.schema: ${env:MARIADB_SCHEMA}
 # Crafter DB connection string
-studio.db.url: jdbc:mariadb://${env:MARIADB_HOST}:${env:MARIADB_PORT}/${env:MARIADB_SCHEMA}?user=${env:MARIADB_USER}&password=${env:MARIADB_PASSWD}
+studio.db.url: jdbc:mariadb://${env:MARIADB_HOST}:${env:MARIADB_PORT}/${env:MARIADB_SCHEMA}?user=${env:MARIADB_USER}&password=${env:MARIADB_PASSWD}&socketTimeout=${env:MARIADB_SOCKET_TIMEOUT}
 # Connection string used to initialize database. This creates the `crafter` schema, the `crafter` user and/or upgrades the database
 studio.db.initializer.url: jdbc:mariadb://${env:MARIADB_HOST}:${env:MARIADB_PORT}?user=${env:MARIADB_ROOT_USER}&password=${env:MARIADB_ROOT_PASSWD}
 # Connection string if using a database with an already created schema and user (like AWS RDS)
@@ -94,9 +94,9 @@ studio.db.socket: /tmp/MariaDB4j.${env:MARIADB_PORT}.sock
 # studio.security.type: ldap
 #
 # Salt for encrypting
-# studio.security.cipher.salt: TDEsDF8vx3gV4c7G
+studio.security.cipher.salt: ${env:CRAFTER_SYSTEM_ENCRYPTION_KEY}
 # Key for encrypting
-# studio.security.cipher.key: AoCcBdnsTa9R3DdG
+studio.security.cipher.key: ${env:CRAFTER_SYSTEM_ENCRYPTION_SALT}
 # Password requirements validation regular expression
 # The supported capture group keys are:
 #   hasNumbers
@@ -214,12 +214,6 @@ studio.mail.port: ${env:MAIL_PORT}
 # studio.clustering.sync.urlFormat: ssh://{username}@{localAddress}{absolutePath}
 
 # Cluster Syncers
-# Sandbox Sync Job interval in milliseconds which is how often to sync the work-area
-# studio.clustering.sandboxSyncJob.interval: 2000
-# Published Sync Job interval in milliseconds which is how often to sync the published repos
-# studio.clustering.publishedSyncJob.interval: 60000
-# Global Repo Sync Job interval in milliseconds which is how often to sync the global repo
-# studio.clustering.globalRepoSyncJob.interval: 45000
 # Cluster member after heartbeat stale for amount of minutes will be declared inactive
 # studio.clustering.heartbeatStale.timeLimit: 5
 # Cluster member after being inactive for amount of minutes will be removed from cluster
@@ -286,9 +280,7 @@ studio.search.threads: -1
 ##                 Serverless Delivery                  ##
 ##########################################################
 # Indicates if serverless delivery is enabled
-# studio.serverless.delivery.enabled: true
-# Indicates if the local (preview) Deployer is going to be used for serverless deployments
-# studio.serverless.delivery.deployer.local: true
+# studio.serverless.delivery.enabled: false
 # The URL for the serverless delivery deployer create URL
 # studio.serverless.delivery.deployer.target.createUrl: ${studio.preview.createTargetUrl}
 # The URL for the serverless delivery deployer delete URL
@@ -297,10 +289,12 @@ studio.search.threads: -1
 # studio.serverless.delivery.deployer.target.template: aws-cloudformed-s3
 # Replace existing target configuration if one exists?
 # studio.serverless.delivery.deployer.target.replace: false
-# The URL of the site repo that the Deployer needs to upload to the bucket needed by serverless delivery. If using the
-# local deployer, this should be the local path to the published repo. If using a a Deployer in a separate node
-# (because of clustering), this should be an load balanced SSH/HTTP URL to the published repo
-# studio.serverless.delivery.deployer.target.repoUrl: ${env:CRAFTER_DATA_DIR}/repos/sites/{siteName}/published
+# The URL the deployer will use to clone/pull the site's published repo. When the deployer is in a separate node
+# (because of clustering), this URL should be an SSH/HTTP URL to the load balancer in front of the Studios
+# studio.serverless.delivery.deployer.target.remoteRepoUrl: ${env:CRAFTER_DATA_DIR}/repos/sites/{siteName}/published
+# The deployer's local path where it will store the clone of the published site. This property is not needed if
+# the deployer is not the preview deployer, so you can leave an empty string ('') instead
+# studio.serverless.delivery.deployer.target.localRepoPath: ${env:CRAFTER_DATA_DIR}/repos/aws/{siteName}
 # Parameters for the target template. Please check the deployer template documentation for the possible parameters.
 # The following parameters will be sent automatically, and you don't need to specify them: env, site_name, replace,
 # disable_deploy_cron, local_repo_path, repo_url, use_crafter_search
@@ -327,3 +321,10 @@ studio.search.threads: -1
 #       cloudfrontCertificateArn:
 #       # The alternate domains names (besides *.cloudfront.net) for the CloudFront CDN (optional when target template is aws-cloudformed-s3)
 #       alternateCloudFrontDomainNames:
+
+##################################################
+##             Forwarded Headers                ##
+##################################################
+# Indicates if Forwarded or X-Forwarded headers should be used when resolving the client-originated protocol and
+# address. Enable when Studio is behind a reverse proxy or load balancer that sends these
+studio.forwarded.headers.enabled: false
