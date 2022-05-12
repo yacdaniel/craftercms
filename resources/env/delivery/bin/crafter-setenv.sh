@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2007-2020 Crafter Software Corporation. All Rights Reserved.
+# Copyright (C) 2007-2022 Crafter Software Corporation. All Rights Reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -23,8 +23,6 @@ export CRAFTER_BACKUPS_DIR=${CRAFTER_BACKUPS_DIR:="$CRAFTER_HOME/backups"}
 # -------------------- Hosts and ports --------------------
 export MAIL_HOST=${MAIL_HOST:="localhost"}
 export MAIL_PORT=${MAIL_PORT:="@SMTP_PORT@"}
-export SOLR_HOST=${SOLR_HOST:="localhost"}
-export SOLR_PORT=${SOLR_PORT:="@SOLR_PORT@"}
 export ES_HOST=${ES_HOST:="localhost"}
 export ES_PORT=${ES_PORT:="@ES_PORT@"}
 export DEPLOYER_HOST=${DEPLOYER_HOST:="localhost"}
@@ -36,34 +34,22 @@ export TOMCAT_HTTP_PORT=${TOMCAT_HTTP_PORT:="@TOMCAT_HTTP_PORT@"}
 export TOMCAT_HTTPS_PORT=${TOMCAT_HTTPS_PORT:="@TOMCAT_HTTPS_PORT@"}
 export TOMCAT_AJP_PORT=${TOMCAT_AJP_PORT:="@TOMCAT_AJP_PORT@"}
 export TOMCAT_SHUTDOWN_PORT=${TOMCAT_SHUTDOWN_PORT:="@TOMCAT_SHUTDOWN_PORT@"}
+export TOMCAT_DEBUG_PORT=${TOMCAT_DEBUG_PORT:="@TOMCAT_DEBUG_PORT@"}
 
 # -------------------- URLs --------------------
-export SOLR_URL=${SOLR_URL:="http://$SOLR_HOST:$SOLR_PORT/solr"}
 export ES_URL=${ES_URL:="http://$ES_HOST:$ES_PORT"}
 export DEPLOYER_URL=${DEPLOYER_URL:="http://$DEPLOYER_HOST:$DEPLOYER_PORT"}
 export ENGINE_URL=${ENGINE_URL:="http://$TOMCAT_HOST:$TOMCAT_HTTP_PORT"}
-export SEARCH_URL=${SEARCH_URL:="http://$TOMCAT_HOST:$TOMCAT_HTTP_PORT/crafter-search"}
 export PROFILE_URL=${PROFILE_URL:="http://$TOMCAT_HOST:$TOMCAT_HTTP_PORT/crafter-profile"}
 export SOCIAL_URL=${SOCIAL_URL:="http://$TOMCAT_HOST:$TOMCAT_HTTP_PORT/crafter-social"}
 
 # -------------------- Java opts --------------------
-# Preferred for memory related parameters such as -Xmx, -Xms
-export SOLR_JAVA_MEM=${SOLR_JAVA_MEM:="-Xms1G -Xmx1G"}
-# Preferred for stack size
-export SOLR_JAVA_STACK_SIZE=${SOLR_JAVA_STACK_SIZE:="-Xss1024K"}
-# Preferred for other Solr's parameters
-export SOLR_JAVA_OPTS=${SOLR_JAVA_OPTS:="-Dlog4j2.formatMsgNoLookups=true"}
 export ES_JAVA_OPTS=${ES_JAVA_OPTS:="-server -Xss1024K -Xms1G -Xmx1G -Dlog4j2.formatMsgNoLookups=true"}
 export DEPLOYER_JAVA_OPTS=${DEPLOYER_JAVA_OPTS:="-server -Xss1024K -Xmx1G -Dlog4j2.formatMsgNoLookups=true"}
 export CATALINA_OPTS=${CATALINA_OPTS:="-server -Xss1024K -Xms1G -Xmx2G -Dlog4j2.formatMsgNoLookups=true"}
 
-# -------------------- Solr variables --------------------
-export SOLR_HOME=${SOLR_HOME:="$CRAFTER_BIN_DIR/solr/server/solr"}
-export SOLR_INDEXES_DIR=${SOLR_INDEXES_DIR:="$CRAFTER_DATA_DIR/indexes"}
-export SOLR_LOGS_DIR=${SOLR_LOGS_DIR:="$CRAFTER_LOGS_DIR/solr"}
-export SOLR_PID=${SOLR_PID:="$SOLR_HOME/solr.pid"}
-
 # -------------------- Elasticsearch variables --------------------
+export ES_JAVA_HOME=${ES_JAVA_HOME:="$JAVA_HOME"}
 export ES_HOME=${ES_HOME:="$CRAFTER_BIN_DIR/elasticsearch/bin"}
 export ES_INDEXES_DIR=${ES_INDEXES_DIR:="$CRAFTER_DATA_DIR/indexes-es"}
 export ES_LOGS_DIR=${ES_LOGS_DIR:="$CRAFTER_LOGS_DIR/elasticsearch"}
@@ -99,7 +85,6 @@ export GIT_CONFIG_NOSYSTEM=${GIT_CONFIG_NOSYSTEM:="true"}
 # Please update this per installation and provide these tokens to the status monitors.
 export ENGINE_MANAGEMENT_TOKEN=${ENGINE_MANAGEMENT_TOKEN:="defaultManagementToken"}
 export DEPLOYER_MANAGEMENT_TOKEN=${DEPLOYER_MANAGEMENT_TOKEN:="defaultManagementToken"}
-export SEARCH_MANAGEMENT_TOKEN=${SEARCH_MANAGEMENT_TOKEN:="defaultManagementToken"}
 export PROFILE_MANAGEMENT_TOKEN=${PROFILE_MANAGEMENT_TOKEN:="defaultManagementToken"}
 export SOCIAL_MANAGEMENT_TOKEN=${SOCIAL_MANAGEMENT_TOKEN:="defaultManagementToken"}
 
@@ -108,8 +93,12 @@ export SOCIAL_MANAGEMENT_TOKEN=${SOCIAL_MANAGEMENT_TOKEN:="defaultManagementToke
 export SEARCH_ACCESS_TOKEN=${SEARCH_ACCESS_TOKEN:="defaultAccessToken"}
 
 # -------------------- Encryption variables --------------------
-export CRAFTER_ENCRYPTION_KEY=${CRAFTER_ENCRYPTION_KEY:="default_encryption_key"}
-export CRAFTER_ENCRYPTION_SALT=${CRAFTER_ENCRYPTION_SALT:="default_encryption_salt"}
+export CRAFTER_ENCRYPTION_KEY=${CRAFTER_ENCRYPTION_KEY:="zEtRii1jWUuUUB0W"}
+export CRAFTER_ENCRYPTION_SALT=${CRAFTER_ENCRYPTION_SALT:="DgGN9xhq3GOn6zxg"}
 
 # -------------------- Configuration variables --------------------
 export CRAFTER_ENVIRONMENT=${CRAFTER_ENVIRONMENT:=default}
+
+# -------------------- SSH variables --------------------
+# The path of the folder used for the SSH configuration
+export CRAFTER_SSH_CONFIG=${CRAFTER_SSH_CONFIG:="$CRAFTER_DATA_DIR/ssh"}

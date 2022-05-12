@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Crafter Software Corporation. All Rights Reserved.
+ * Copyright (C) 2007-2022 Crafter Software Corporation. All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as published by
@@ -15,35 +15,43 @@
  */
 package upgrade.hooks
 
-import upgrade.hooks.v30.CreateAuthoringTargetsHook
-import upgrade.hooks.v30.EnableCrafterSearchInTargetsHook
-import upgrade.hooks.v30.RecreateSolrCoresHook
-import upgrade.hooks.v30.UpdateIndexIdFormatInPreviewTargetsHook
-
 import java.nio.file.Path
 
 class PostUpgradeHooks {
 
+    private static final List<PostUpgradeHooks> AUTHORING_3_1_X_NO_DB_HOOKS = [
+            new StartCrafterHook(),
+            new RecreateIndexesHook(),
+            new PostUpgradeCompletedHook(true)
+    ]
+
+    private static final List<PostUpgradeHooks> AUTHORING_3_1_X_WITH_DB_HOOKS = [
+            new UpgradeEmbeddedDbHook(),
+            new StartCrafterHook(),
+            new RecreateIndexesHook(),
+            new PostUpgradeCompletedHook(true)
+    ]
+
+    private static final List<PostUpgradeHooks> DELIVERY_3_1_X_HOOKS = [
+            new StartCrafterHook(),
+            new RecreateIndexesHook(),
+            new PostUpgradeCompletedHook(true)
+    ]
+
     private static final Map<String, List<PostUpgradeHook>> ALL_HOOKS = [
-            'authoring 3.0.x': [
-                    new UpgradeEmbeddedDbHook(),
-                    new UpdateIndexIdFormatInPreviewTargetsHook(),
-                    new EnableCrafterSearchInTargetsHook(),
-                    new StartCrafterHook(['withSolr']),
-                    new CreateAuthoringTargetsHook(),
-                    new RecreateSolrCoresHook(),
-                    new PostUpgradeCompletedHook(true)
-            ],
-            'delivery 3.0.x': [
-                    new EnableCrafterSearchInTargetsHook(),
-                    new StartCrafterHook(['withSolr']),
-                    new RecreateSolrCoresHook(),
-                    new PostUpgradeCompletedHook(true)
-            ],
-            'authoring 3.1.0': [
-                    new UpgradeEmbeddedDbHook(),
-                    new PostUpgradeCompletedHook(false)
-            ],
+
+            'authoring 3.1.9' : AUTHORING_3_1_X_WITH_DB_HOOKS,
+            'authoring 3.1.12': AUTHORING_3_1_X_WITH_DB_HOOKS,
+            'authoring 3.1.13': AUTHORING_3_1_X_WITH_DB_HOOKS,
+            'authoring 3.1.17': AUTHORING_3_1_X_NO_DB_HOOKS,
+            'authoring 3.1.18': AUTHORING_3_1_X_NO_DB_HOOKS,
+
+            'delivery 3.1.9' : DELIVERY_3_1_X_HOOKS,
+            'delivery 3.1.12': DELIVERY_3_1_X_HOOKS,
+            'delivery 3.1.13': DELIVERY_3_1_X_HOOKS,
+            'delivery 3.1.17': DELIVERY_3_1_X_HOOKS,
+            'delivery 3.1.18': DELIVERY_3_1_X_HOOKS,
+
             '*': [
                     new PostUpgradeCompletedHook(false)
             ]

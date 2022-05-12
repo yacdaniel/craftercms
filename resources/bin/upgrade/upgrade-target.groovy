@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Crafter Software Corporation. All Rights Reserved.
+ * Copyright (C) 2007-2022 Crafter Software Corporation. All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as published by
@@ -51,10 +51,7 @@ import static utils.ScriptUtils.*
     'apache-tomcat/shared/classes/.+': true,
     'crafter-deployer/config/.+': true,
     'crafter-deployer/logging\\.xml': false,
-    'elasticsearch/config/.+': true,
-    'solr/server/resources/.+': true,
-    'solr/server/solr/[^/]+': true,
-    'solr/server/solr/configsets/crafter_configs/.+': true
+    'elasticsearch/config/.+': true
 ]
 // List of patterns for files that shouldn't be deleted
 @Field List<String> shouldNotBeDeletedFilePatterns = [

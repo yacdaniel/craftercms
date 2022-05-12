@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (C) 2007-2020 Crafter Software Corporation. All Rights Reserved.
+  ~ Copyright (C) 2007-2022 Crafter Software Corporation. All Rights Reserved.
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License version 3 as published by
@@ -47,13 +47,7 @@
         <Logger name="org.craftercms.security" level="info"/>
 
         <!-- 3rdparty Loggers -->
-        <Logger name="org.springframework.core" level="info"/>
-
-        <Logger name="org.springframework.beans" level="info"/>
-
-        <Logger name="org.springframework.context" level="info"/>
-
-        <Logger name="org.springframework.web" level="info"/>
+        <Logger name="org.springframework" level="warn"/>
 
         <Logger name="org.mongodb.driver" level="warn"/>
 

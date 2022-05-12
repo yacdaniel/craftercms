@@ -1,0 +1,233 @@
+/*
+ * Copyright (C) 2007-2022 Crafter Software Corporation. All Rights Reserved.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+// Deps
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath project.property("grgit.version")
+        classpath group: 'org.apache.commons', name: 'commons-text', version: project.property("commons.text.version")
+        classpath group: 'org.apache.commons', name: 'commons-lang3', version: project.property("commons.lang3.version")
+	}
+}
+
+import java.security.MessageDigest
+
+// Helper methods
+ext.splash = { ->
+	System.out.println("\033[38;5;196m")
+	System.out.println(" ██████╗ ██████╗   █████╗  ███████╗ ████████╗ ███████╗ ██████╗      ██████╗ ███╗   ███╗ ███████╗")
+	System.out.println("██╔════╝ ██╔══██╗ ██╔══██╗ ██╔════╝ ╚══██╔══╝ ██╔════╝ ██╔══██╗    ██╔════╝ ████╗ ████║ ██╔════╝")
+	System.out.println("██║      ██████╔╝ ███████║ █████╗      ██║    █████╗   ██████╔╝    ██║      ██╔████╔██║ ███████╗")
+	System.out.println("██║      ██╔══██╗ ██╔══██║ ██╔══╝      ██║    ██╔══╝   ██╔══██╗    ██║      ██║╚██╔╝██║ ╚════██║")
+	System.out.println("╚██████╗ ██║  ██║ ██║  ██║ ██║         ██║    ███████╗ ██║  ██║    ╚██████╗ ██║ ╚═╝ ██║ ███████║")
+	System.out.println(" ╚═════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚═╝         ╚═╝    ╚══════╝ ╚═╝  ╚═╝     ╚═════╝ ╚═╝     ╚═╝ ╚══════╝")
+	System.out.println("\033[0m")
+}
+
+// Settings
+ext {
+	srcFolder = getPropertySafelyWithDefaults("projectDir", ".") + "/src/"
+	commandTimeout = getPropertySafelyWithDefaults("commandTimeout", 1000000).toInteger()
+	mavenCmd = getPropertySafelyWithDefaults("quietBuild", "true").toBoolean()? ["mvn", "-q"] : ["mvn"]
+}
+
+ext.execCommand = { command, dir ->
+	def cmd = "";
+
+	command.each { fragment ->
+		cmd += fragment
+		if (fragment != command.last()) {
+			cmd += " "
+		}
+	}
+
+	//System.out.println("Executing command \"" + dir + ":" + cmd + "\"")
+
+	def proc = cmd.execute(null, file(dir))
+
+	proc.consumeProcessOutput(System.out, System.err)
+	proc.waitForOrKill(commandTimeout)
+
+	if (proc.exitValue() != 0) {
+		throw new GradleException("$cmd failed.")
+	}
+}
+
+ext.syncFolder = { workingDir, source, destination, exclude, overwriteChangedFiles, deleteNonExisting ->
+    def command = [];
+
+	command = ["rsync", "-ar"]
+
+	if (!overwriteChangedFiles) {
+        command += ["--update"]
+    }
+
+    if (deleteNonExisting) {
+        command += ["--delete"]
+    }
+
+	if (!exclude.isEmpty()) {
+		command += ["--exclude", exclude]
+	}
+
+    // Make sure the destination exists
+    file(destination).mkdirs()
+
+    // Rsync the source to the destination
+	command += [source, destination]
+
+	try {
+		execCommand(command, workingDir)
+	} catch (e) {
+		logger.error("Failed to sync folders workingDir: {}, source: {}, destination: {}," +
+				"exclude: {}, overwriteChangedFiles: {}, exception: {}", workingDir, source,
+				destination, exclude, overwriteChangedFiles, e)
+		throw new GradleException("Failed to sync folders.", e)
+	}
+}
+
+// Build methods
+ext.cloneModule = { module, gitUrl, shallowClone, gitBranch, gitRemote ->
+	def url = gitUrl + module
+	def dir = srcFolder
+	def gitFolder = new File(dir + module + "/.git")
+
+	if (!gitFolder.exists()) {
+		if (!file(srcFolder).exists())
+			file(srcFolder).mkdir()
+
+		try {
+			if (shallowClone) {
+				execCommand(["git", "clone", "--depth", "1", "-b", gitBranch, "-o", gitRemote, url], dir)
+			} else {
+				execCommand(["git", "clone", "-b", gitBranch, "-o", gitRemote, url], dir)
+			}
+		} catch (e) {
+			logger.error("Failed to clone module: {}, exception: {}", module, e)
+			throw new GradleException("Failed to clone module.", e)
+		}
+	}
+}
+
+ext.updateModule = { module, remote, branch ->
+	def dir = srcFolder + module
+
+	try {
+		execCommand(["git", "pull", remote, branch], dir)
+	} catch (e) {
+		logger.error("Failed to update module: {}, exception: {}", module, e)
+		throw new GradleException("Failed to update module.", e)
+	}
+}
+
+ext.cleanModule = { module ->
+	def dir = srcFolder + module
+
+	try {
+		execCommand(mavenCmd + ["clean"], dir)
+	} catch (e) {
+		logger.error("Failed to clean module: {}, exception: {}", module, e)
+		throw new GradleException("Failed to clean module.", e)
+	}
+}
+
+ext.buildModule = { module, unitTest ->
+	def dir = srcFolder + module
+
+	try {
+		if (unitTest)
+			execCommand(mavenCmd + ["install"], dir)
+		else
+			execCommand(mavenCmd + ["install", "-DskipTests"], dir)
+	} catch (e) {
+		logger.error("Failed to build module: {}, exception: {}", module, e)
+		throw new GradleException("Failed to build module.", e)
+	}
+}
+
+ext.checksumFile = { filePath, algorithm ->
+    // Set your algorithm
+    // "MD2","MD5","SHA","SHA-1","SHA-256","SHA-384","SHA-512"
+    MessageDigest md = MessageDigest.getInstance(algorithm);
+    FileInputStream fis = new FileInputStream(new File(filePath));
+    byte[] dataBytes = new byte[1024];
+
+    int nread = 0;
+    while ((nread = fis.read(dataBytes)) != -1) {
+        md.update(dataBytes, 0, nread);
+    }
+
+    byte[] mdbytes = md.digest();
+
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < mdbytes.length; i++) {
+        sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+    }
+    return sb.toString();
+}
+
+ext.bundleEnvironment = { env, bundlesDir /*, fresh*/ ->
+	def source = "./crafter"
+
+	if (env == "authoring") {
+        file("${authoringEnvDir}").renameTo(source)
+	} else if (env == "delivery") {
+        file("${deliveryEnvDir}").renameTo(source)
+	} else {
+		throw new GradleException("Unknown environment " + env)
+	}
+
+/*
+	// TODO: add support for a fresh env before bundling
+	if (fresh) {
+		// Create a temporary folder and do a fresh build
+		// Set the source to the fresh build
+	}
+*/
+	// Tar and package
+	file(bundlesDir).mkdir()
+	def bundleFilename = "crafter-cms-${env}-${project.version}-${currentPlatform}-x86_64.tar.gz"
+	def bundlePath = "${bundlesDir}/" + bundleFilename
+
+	try {
+		execCommand(["tar", "czf", bundlePath, source], "${projectDir}")
+
+		def md5sum = checksumFile(bundlePath, "MD5")
+		def sha512sum = checksumFile(bundlePath, "SHA-512")
+
+		new File(bundlePath + ".md5").withWriter('utf-8') {
+			writer -> writer.writeLine md5sum + "  " + bundleFilename
+		}
+
+		new File(bundlePath + ".sha512").withWriter('utf-8') {
+			writer -> writer.writeLine sha512sum + "  " + bundleFilename
+		}
+	} catch (e) {
+		logger.error("Failed to create bundle for env: {}, bundlesDir: {}", env, bundlesDir, e)
+		throw new GradleException("Failed to create bundle.", e)
+	} finally {
+        if (env == "authoring") {
+            file(source).renameTo("${authoringEnvDir}")
+        } else if (env == "delivery") {
+            file(source).renameTo("${deliveryEnvDir}")
+        } else {
+            throw new GradleException("Unknown environment " + env)
+        }
+    }
+}

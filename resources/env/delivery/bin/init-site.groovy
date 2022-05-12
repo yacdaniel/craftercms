@@ -20,7 +20,7 @@ import static utils.EnvironmentUtils.*
 import static utils.ScriptUtils.*
 
 /**
- * Infers the repo path assuming a developer installation of Crafter CMS (both Crafter Authoring and Delivery at the
+ * Infers the repo path assuming a developer installation of CrafterCMS (both Crafter Authoring and Delivery at the
  * same location).
  */
 def getDefaultRepoPath(siteName) {
@@ -63,7 +63,6 @@ def buildCli(cli) {
 			'passphrase protected)')
 	cli.a(longOpt: 'notification-addresses', args: 1, argName: 'addresses', 'A comma-separated list of email ' +
 			'addresses that should receive deployment notifications')
-	cli.s(longOpt: 'crafter-search', 'Use Crafter Search instead of Elasticsearch')
 }
 
 /**
@@ -176,10 +175,6 @@ if (options) {
 			repo_branch: 'live',
 			engine_url: getTomcatUrl()
 		];
-
-		if(options.'crafter-search') {
-			targetParams.search_engine = 'CrafterSearch'
-		}
 
 		if (options.branch) {
 			targetParams.repo_branch = options.branch

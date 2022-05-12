@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2007-2020 Crafter Software Corporation. All Rights Reserved.
+# Copyright (C) 2007-2022 Crafter Software Corporation. All Rights Reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as published by
@@ -23,8 +23,6 @@ export CRAFTER_BACKUPS_DIR=${CRAFTER_BACKUPS_DIR:="$CRAFTER_HOME/backups"}
 # -------------------- Hosts and ports --------------------
 export MAIL_HOST=${MAIL_HOST:="localhost"}
 export MAIL_PORT=${MAIL_PORT:="@SMTP_PORT@"}
-export SOLR_HOST=${SOLR_HOST:="localhost"}
-export SOLR_PORT=${SOLR_PORT:="@SOLR_PORT@"}
 export ES_HOST=${ES_HOST:="localhost"}
 export ES_PORT=${ES_PORT:="@ES_PORT@"}
 export DEPLOYER_HOST=${DEPLOYER_HOST:="localhost"}
@@ -38,35 +36,23 @@ export TOMCAT_HTTP_PORT=${TOMCAT_HTTP_PORT:="@TOMCAT_HTTP_PORT@"}
 export TOMCAT_HTTPS_PORT=${TOMCAT_HTTPS_PORT:="@TOMCAT_HTTPS_PORT@"}
 export TOMCAT_AJP_PORT=${TOMCAT_AJP_PORT:="@TOMCAT_AJP_PORT@"}
 export TOMCAT_SHUTDOWN_PORT=${TOMCAT_SHUTDOWN_PORT:="@TOMCAT_SHUTDOWN_PORT@"}
+export TOMCAT_DEBUG_PORT=${TOMCAT_DEBUG_PORT:="@TOMCAT_DEBUG_PORT@"}
 
 # -------------------- URLs --------------------
-export SOLR_URL=${SOLR_URL:="http://$SOLR_HOST:$SOLR_PORT/solr"}
 export ES_URL=${ES_URL:="http://$ES_HOST:$ES_PORT"}
 export DEPLOYER_URL=${DEPLOYER_URL:="http://$DEPLOYER_HOST:$DEPLOYER_PORT"}
 export STUDIO_URL=${STUDIO_URL:="http://$TOMCAT_HOST:$TOMCAT_HTTP_PORT/studio"}
 export ENGINE_URL=${ENGINE_URL:="http://$TOMCAT_HOST:$TOMCAT_HTTP_PORT"}
-export SEARCH_URL=${SEARCH_URL:="http://$TOMCAT_HOST:$TOMCAT_HTTP_PORT/crafter-search"}
 export PROFILE_URL=${PROFILE_URL:="http://$TOMCAT_HOST:$TOMCAT_HTTP_PORT/crafter-profile"}
 export SOCIAL_URL=${SOCIAL_URL:="http://$TOMCAT_HOST:$TOMCAT_HTTP_PORT/crafter-social"}
 
 # -------------------- Java opts --------------------
-# Preferred for memory related parameters such as -Xmx, -Xms
-export SOLR_JAVA_MEM=${SOLR_JAVA_MEM:="-Xms1G -Xmx1G"}
-# Preferred for stack size
-export SOLR_JAVA_STACK_SIZE=${SOLR_JAVA_STACK_SIZE:="-Xss1024K"}
-# Preferred for other Solr's parameters
-export SOLR_JAVA_OPTS=${SOLR_JAVA_OPTS:="-Dlog4j2.formatMsgNoLookups=true"}
 export ES_JAVA_OPTS=${ES_JAVA_OPTS:="-server -Xss1024K -Xms1G -Xmx1G -Dlog4j2.formatMsgNoLookups=true"}
 export DEPLOYER_JAVA_OPTS=${DEPLOYER_JAVA_OPTS:="-server -Xss1024K -Xmx1G -Dlog4j2.formatMsgNoLookups=true"}
 export CATALINA_OPTS=${CATALINA_OPTS:="-server -Xss1024K -Xms1G -Xmx4G -Dlog4j2.formatMsgNoLookups=true"}
 
-# -------------------- Solr variables --------------------
-export SOLR_HOME=${SOLR_HOME:="$CRAFTER_BIN_DIR/solr/server/solr"}
-export SOLR_INDEXES_DIR=${SOLR_INDEXES_DIR:="$CRAFTER_DATA_DIR/indexes"}
-export SOLR_LOGS_DIR=${SOLR_LOGS_DIR:="$CRAFTER_LOGS_DIR/solr"}
-export SOLR_PID=${SOLR_PID:="$SOLR_HOME/solr.pid"}
-
 # -------------------- Elasticsearch variables --------------------
+export ES_JAVA_HOME=${ES_JAVA_HOME:="$JAVA_HOME"}
 export ES_HOME=${ES_HOME:="$CRAFTER_BIN_DIR/elasticsearch/bin"}
 export ES_INDEXES_DIR=${ES_INDEXES_DIR:="$CRAFTER_DATA_DIR/indexes-es"}
 export ES_LOGS_DIR=${ES_LOGS_DIR:="$CRAFTER_LOGS_DIR/elasticsearch"}
@@ -125,7 +111,6 @@ export GIT_CONFIG_NOSYSTEM=${GIT_CONFIG_NOSYSTEM:="true"}
 export STUDIO_MANAGEMENT_TOKEN=${STUDIO_MANAGEMENT_TOKEN:="defaultManagementToken"}
 export ENGINE_MANAGEMENT_TOKEN=${ENGINE_MANAGEMENT_TOKEN:="defaultManagementToken"}
 export DEPLOYER_MANAGEMENT_TOKEN=${DEPLOYER_MANAGEMENT_TOKEN:="defaultManagementToken"}
-export SEARCH_MANAGEMENT_TOKEN=${SEARCH_MANAGEMENT_TOKEN:="defaultManagementToken"}
 export PROFILE_MANAGEMENT_TOKEN=${PROFILE_MANAGEMENT_TOKEN:="defaultManagementToken"}
 export SOCIAL_MANAGEMENT_TOKEN=${SOCIAL_MANAGEMENT_TOKEN:="defaultManagementToken"}
 
@@ -135,8 +120,8 @@ export SEARCH_ACCESS_TOKEN=${SEARCH_ACCESS_TOKEN:="defaultAccessToken"}
 
 # -------------------- Encryption variables --------------------
 # These variables are used to encrypt and decrypt values inside the configuration files.
-export CRAFTER_ENCRYPTION_KEY=${CRAFTER_ENCRYPTION_KEY:="default_encryption_key"}
-export CRAFTER_ENCRYPTION_SALT=${CRAFTER_ENCRYPTION_SALT:="default_encryption_salt"}
+export CRAFTER_ENCRYPTION_KEY=${CRAFTER_ENCRYPTION_KEY:="zEtRii1jWUuUUB0W"}
+export CRAFTER_ENCRYPTION_SALT=${CRAFTER_ENCRYPTION_SALT:="DgGN9xhq3GOn6zxg"}
 
 # These variables are used by Studio to encrypt and decrypt values in the database.
 export CRAFTER_SYSTEM_ENCRYPTION_KEY=${CRAFTER_SYSTEM_ENCRYPTION_KEY:="zEtRii1jWUuUUB0W"}
@@ -145,7 +130,32 @@ export CRAFTER_SYSTEM_ENCRYPTION_SALT=${CRAFTER_SYSTEM_ENCRYPTION_SALT:="DgGN9xh
 # -------------------- Configuration variables --------------------
 export CRAFTER_ENVIRONMENT=${CRAFTER_ENVIRONMENT:=default}
 
-# The max size of the configuration cache for Studio
-export STUDIO_CONFIG_CACHE_MAX_SIZE=${STUDIO_CONFIG_CACHE_MAX_SIZE:=100}
-# The time in seconds to expire items in the configuration cache
-export STUDIO_CONFIG_CACHE_EXPIRE_TIME=${STUDIO_CONFIG_CACHE_EXPIRE_TIME:=500}
+# -------------------- SSH variables --------------------
+# The path of the folder used for the SSH configuration
+export CRAFTER_SSH_CONFIG=${CRAFTER_SSH_CONFIG:="$CRAFTER_DATA_DIR/ssh"}
+
+# -------------------- Studio's access tokens ---------------------
+# *************************************************************************************
+# ************************* IMPORTANT *************************************************
+# The following variables are used to control the access tokens used for Studio's API,
+# please replace all default values to properly secure your installation
+# *************************************************************************************
+
+# Issuer for the generated access tokens
+export STUDIO_TOKEN_ISSUER=${STUDIO_TOKEN_ISSUER:="Crafter Studio"}
+# List of accepted issuers for validation of access tokens (separated by commas)
+export STUDIO_TOKEN_VALID_ISSUERS=${STUDIO_TOKEN_VALID_ISSUERS:="Crafter Studio"}
+# The audience for generation and validation of access tokens (if empty the instance id will be used)
+export STUDIO_TOKEN_AUDIENCE=${STUDIO_TOKEN_AUDIENCE:=""}
+# Time in minutes for the expiration of the access tokens
+export STUDIO_TOKEN_TIMEOUT=${STUDIO_TOKEN_TIMEOUT:=5}
+# Password for signing the access tokens (needs to be equal or greater than 512 bits in length)
+export STUDIO_TOKEN_SIGN_PASSWORD=${STUDIO_TOKEN_SIGN_PASSWORD:="E1oEGMMEaxvUQJTFePPyniOLNxVLHuoPHGaedqMe1tQqXa28u3MvRTBgTZfRqIzM"}
+# Password for encrypting the access tokens
+export STUDIO_TOKEN_ENCRYPT_PASSWORD=${STUDIO_TOKEN_ENCRYPT_PASSWORD:="fEo7tQCXX1RYHE2ODOtjtBzmL0zzonSI"}
+# Name of the cookie to store the refresh token
+export STUDIO_REFRESH_TOKEN_NAME=${STUDIO_REFRESH_TOKEN_NAME:="refresh_token"}
+# Time in seconds for the expiration of the refresh token cookie
+export STUDIO_REFRESH_TOKEN_MAX_AGE=${STUDIO_REFRESH_TOKEN_MAX_AGE:=300}
+# Indicates if the refresh token cookie should be secure
+export STUDIO_REFRESH_TOKEN_SECURE=${STUDIO_REFRESH_TOKEN_SECURE:="false"}

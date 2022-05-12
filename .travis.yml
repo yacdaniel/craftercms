@@ -1,0 +1,35 @@
+version: "~> 1.0"
+git:
+  depth: 1
+  quiet: true
+language: java
+jdk:
+  - openjdk11
+cache:
+  directories:
+    - "$HOME/.m2"
+branches:
+  only:
+  - develop
+  - support/.*
+  - master
+notifications:
+  irc:
+    channels:
+    - chat.freenode.net#craftercms
+    use_notice: true
+    skip_join: true
+  slack: craftersoftware:7YiSb41ZG5rfMgiAY7Qgprc7
+script:
+- if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
+    bash -c "mvn -DskipTests deploy --settings .travis-settings.xml";
+    bash -c "mvn -DskipTests -f pom-spring-boot.xml deploy --settings .travis-settings.xml";
+  fi
+- if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+    bash -c "mvn -DskipTests clean install"
+    bash -c "mvn -DskipTests -f pom-spring-boot.xml clean install";
+  fi
+env:
+  global:
+  - secure: sW3uVNhGV9yDiGULRhMQZksGAEhWisqoNAeqG0lcp4qo6BQpfEAq919iNphGXn//TeMhlWOazGkUwqadmaAbMAKSKtDg1zSH42qnoMpUxbx2Gxj9X0dF8XCAEATEcrBmzxLYTwy2P5x9gGHFJKTgtmUk9MSXSsfrgEoxTcd17037OTX4nreeBbgmaOFbNR2eqTWYSE8pLSBK8mM0hiBQpp8Y1guF34qa4Vx3J/qR+uXDILsA5+Otu7dXf3eIKG4m6Kvo58+SD2/wnwI0c38bJcDS2KcwYdwfVZLrITcC7e6l1ppcvDtp1ar5KQVluL/+tLmy2PEdHqD447xYxPM9aF5nkDo7H8upiSymZgxzTludPqCwl1fvGNPtH0u0D2mGuGpEnqI1QZB17vigUrIYQY0xd4FQ6qmOi3POYqBCtskJoz0vYq96RIC9dbrEHXjhcnlYkWWe1LQmFDhg3XGSFbON0lmpkSPJg8kVrWbl9lSqLmLS4jSmOJuTQPQOkjfHIfwE7+rQ0uOZe/TzfBTb/99gAfIE6EcizlFUQ1/j8V9ZegpdybkM+VxlUU9ArdeLn3LpR2gpAWqHKy1dF5kK9GtfeiIpu8bm3IZV++5oVjSy2wyjXRajPikd/WlgnJuwrOu4g1piKvbk5n+k8jjEySTTvAhum1o2ATTBIRQHugQ=
+  - secure: JYPmNrrzPqDzp1hlu/+aiqX5yk7gspfocnQ1I3AVHgpB8YEkvWjVJD9wcwL1g3QoUAb1r8k4f5Yk2WIuoBPJOKWygMd4ltuPRMMNIdhnWe/VXPTTkV427xyUUZ/Tl3fQ0bvAp9k5Lvfgtc7BjQuo3C6qp1ePnc8HzpU7ui5roE0P5LR4Y2Ws757BWBXVwUwJl3hlynrN6mmt0qF1nMgOyBhM77Qx1zHyUqbJhYUT5RHHPWUi/9ht5oPYRVAjWEoC/+5FriKGtxpr8bFDUG+L1sy6IeWB7yCmnW5DRHWXHGNqi6c1YzWzzLN4lXT611TazXf6q9pdE/0vIiC55EG++4I52YYHCqlo9r1AmZtInxN9BUmnaBZhd/fCOirfSUxmAh0lKXC4bWIsznPFtdDkz0Y22i9v/oirxANK5yoZtsczmhgsjWRTZdYqLKnxZTM55Of4cC7+iGj5IGse2jyYBGHCKhPv2XJ+J63z56cJQKsf7qQXsCG0UfQTVX+uPPlkzAD2PScOjd5THou4qjyJSlG4b1Nbl1otUVdqMBlUjmNJjZcibHbmgtmAs9RQcTHHs3TEUaol7iws4NuKetbzMiK1sgzgSVbHKkV+yUxO30LwBk3Kw7zy/XUvskHNsFKgmpd66BJZYYuXPcit5TfHpF4QirgtonzoBVG4M9Dgasw=
