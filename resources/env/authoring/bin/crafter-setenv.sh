@@ -114,10 +114,6 @@ export DEPLOYER_MANAGEMENT_TOKEN=${DEPLOYER_MANAGEMENT_TOKEN:="defaultManagement
 export PROFILE_MANAGEMENT_TOKEN=${PROFILE_MANAGEMENT_TOKEN:="defaultManagementToken"}
 export SOCIAL_MANAGEMENT_TOKEN=${SOCIAL_MANAGEMENT_TOKEN:="defaultManagementToken"}
 
-# -------------------- Access tokens ----------------
-# Please update this per installation and provide these tokens to the APIs.
-export SEARCH_ACCESS_TOKEN=${SEARCH_ACCESS_TOKEN:="defaultAccessToken"}
-
 # -------------------- Encryption variables --------------------
 # These variables are used to encrypt and decrypt values inside the configuration files.
 export CRAFTER_ENCRYPTION_KEY=${CRAFTER_ENCRYPTION_KEY:="zEtRii1jWUuUUB0W"}

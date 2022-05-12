@@ -45,8 +45,6 @@
 
         <Logger name="org.springframework" level="warn"/>
 
-        <Logger name="org.springframework.security.config.http.DefaultFilterChainValidator" level="warn"/>
-
         <Logger name="org.mongodb.driver" level="warn"/>
 
         <Logger name="org.tuckey" level="info"/>

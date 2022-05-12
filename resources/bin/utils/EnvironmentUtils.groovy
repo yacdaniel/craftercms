@@ -109,13 +109,6 @@ class EnvironmentUtils {
     }
 
     /**
-     * Returns the Search Access Token
-     */
-    static String getSearchAccessToken() {
-        return getEnv("SEARCH_ACCESS_TOKEN")
-    }
-
-    /**
      * Return true if the script should run in download grapes only mode.
      */
     static boolean isDownloadGrapesOnlyMode() {
