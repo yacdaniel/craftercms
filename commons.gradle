@@ -20,9 +20,9 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath project.property("grgit.version")
-        classpath group: 'org.apache.commons', name: 'commons-text', version: project.property("commons.text.version")
-        classpath group: 'org.apache.commons', name: 'commons-lang3', version: project.property("commons.lang3.version")
+		classpath group: 'org.ajoberstar.grgit', name: 'org.ajoberstar.grgit.gradle.plugin', version: project.property('grgit.version')
+		classpath group: 'org.apache.commons', name: 'commons-text', version: project.property('commons-text.version')
+		classpath group: 'org.apache.commons', name: 'commons-lang3', version: project.property('commons-lang3.version')
 	}
 }
 
@@ -120,6 +120,16 @@ ext.cloneModule = { module, gitUrl, shallowClone, gitBranch, gitRemote ->
 			logger.error("Failed to clone module: {}, exception: {}", module, e)
 			throw new GradleException("Failed to clone module.", e)
 		}
+	}
+}
+
+ext.installPoms = {
+	try {
+		execCommand(mavenCmd + ["install"], "${projectDir}")
+		execCommand(mavenCmd + ["-f", "pom-spring-boot.xml", "install"], "${projectDir}")
+	} catch (e) {
+		logger.error("Failed to install POMs, exception: {}", e)
+		throw new GradleException("Failed to install POMs.", e)
 	}
 }
 

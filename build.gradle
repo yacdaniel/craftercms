@@ -21,7 +21,7 @@ plugins {
 apply plugin: "groovy"
 apply plugin: 'de.undercouch.download'
 
-project.version = "4.1.1" // craftercms version flag
+project.version = "4.1.2" // craftercms version flag
 
 apply from: "global-settings.gradle"
 apply from: "commons.gradle"
@@ -128,10 +128,20 @@ clean() {
 	}
 }
 
+task installPomFiles() {
+	description 'Installs the main POMs.'
+	mustRunAfter selfUpdate
+	dependsOn = [ "preFlightCheck" ]
+	doFirst {
+		println "Installing main POMs"
+		installPoms()
+	}
+}
+
 build() {
 	description 'Builds the modules and prepares the binaries for deployment.'
 	mustRunAfter clean
-	dependsOn = [ "clone" ]
+	dependsOn = [ "clone", "installPomFiles" ]
 	doFirst {
 		getBuildModules().each { module ->
 			println "Building $module"
