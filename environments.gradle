@@ -98,7 +98,13 @@ ext.commonItemsToCopy = [
     ],
     [
         name: "mongosh",
-        from: "${downloadDir}/mongosh-${mongoshVersion}-${currentPlatform}-${mongoshArch}/bin/mongosh",
+        from: "${downloadDir}/mongosh-${mongoshVersion}-${currentPlatform}-${mongoshArch}/bin/",
+        into: "/bin/mongodb/bin/",
+        exclude: ""
+    ],
+    [
+        name: "mongodb-database-tools",
+        from: "${downloadDir}/mongodb-database-tools-${mongoToolsArch}-${mongoToolsVersion}/bin/",
         into: "/bin/mongodb/bin/",
         exclude: ""
     ],
@@ -119,8 +125,9 @@ ext.commonItemsToCopy = [
 ext.authoringItemsToCopy = [
     [
         name: "mariadb",
-        from: "${downloadDir}/mariaDB4j-app.jar",
-        into: "/bin",
+        from: "${downloadDir}/mariaDB4j-app-${mariadb4jVersion}.jar",
+        into: "/bin/mariaDB4j-app.jar",
+        copyFile: true,
         exclude: ""
     ],
     [
@@ -503,6 +510,8 @@ ext.commonConfUpdatePatterns = [
                 replace: '# ---------------------------------- Various -----------------------------------' +
                         System.lineSeparator() +
                         'plugins.security.disabled: true' + System.lineSeparator() + 'plugins.sql.enabled: false' +
+                        System.lineSeparator() +
+                        'indices.query.bool.max_clause_count: 8192' +
                         System.lineSeparator()
             ]
         ]
@@ -630,12 +639,13 @@ ext.prepareBaseEnvironment = { envFolder, overwriteChangedFiles, downloadGrapes,
         def performSync = true
 
         // Skip Profile if it's not required nor is Social required (since Social depends on Profile)
-        if (name == "mongodb" && !includeMongodb) {
+        def mongoSync = ["mongodb", "mongosh", "mongodb-database-tools"].contains(name)
+        if (mongoSync && !includeMongodb) {
             performSync = false
         }
 
         if (performSync) {
-            syncFolder("${projectDir}", from, envFolder + into, exclude, overwriteChangedFiles, true)
+            syncFolder("${projectDir}", from, envFolder + into, exclude, overwriteChangedFiles, !mongoSync)
         }
     }
 
@@ -685,7 +695,11 @@ ext.prepareAuthoringEnvironment = { overwriteChangedFiles, downloadGrapes, inclu
         def from = item.from
         def into = item.into
         def exclude = item.exclude
-        syncFolder("${projectDir}", from, "${authoringEnvDir}" + into, exclude, overwriteChangedFiles, true)
+        if (item.copyFile) {
+            copyFile("${projectDir}", from, "${authoringEnvDir}" + into)
+        } else {
+            syncFolder("${projectDir}", from, "${authoringEnvDir}" + into, exclude, overwriteChangedFiles, true)
+        }
     }
 
     // Copy Deployer config

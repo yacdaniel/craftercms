@@ -54,7 +54,7 @@ ext.downloads = [
     [
         name: "mariadb4j",
         url: "https://repo1.maven.org/maven2/org/craftercms/mariaDB4j/mariaDB4j-app/${mariadb4jVersion}/mariaDB4j-app-${mariadb4jVersion}.jar",
-        destinationFile: "${downloadDir}/mariaDB4j-app.jar",
+	destinationFile: "${downloadDir}/mariaDB4j-app-${mariadb4jVersion}.jar",
         checksumAlgorithm: "md5",
         expand: "false",
         expandFolder: ""
@@ -69,8 +69,16 @@ ext.downloads = [
     ],
     [
         name: "mongosh",
-        url: "https://downloads.mongodb.com/compass/mongosh-${mongoshVersion}-${currentPlatform}-${mongoshArch}.${mongoshExtention}",
-        destinationFile: "${downloadDir}/mongosh-${mongoshVersion}-${currentPlatform}-${mongoshArch}.${mongoshExtention}".replace(".tgz", ".tar.gz"),
+        url: "https://downloads.mongodb.com/compass/mongosh-${mongoshVersion}-${currentPlatform}-${mongoshArch}.${mongoExtension}",
+        destinationFile: "${downloadDir}/mongosh-${mongoshVersion}-${currentPlatform}-${mongoshArch}.${mongoExtension}".replace(".tgz", ".tar.gz"),
+        verifyArtifact: false,
+        expand: "true",
+        expandFolder: "${downloadDir}"
+    ],
+    [
+        name: "mongodb-database-tools",
+        url: "https://fastdl.mongodb.org/tools/db/mongodb-database-tools-${mongoToolsArch}-${mongoToolsVersion}.${mongoExtension}",
+        destinationFile: "${downloadDir}/mongodb-database-tools-${mongoToolsArch}-${mongoToolsVersion}.${mongoExtension}".replace(".tgz", ".tar.gz"),
         verifyArtifact: false,
         expand: "true",
         expandFolder: "${downloadDir}"

@@ -21,7 +21,7 @@ plugins {
 apply plugin: "groovy"
 apply plugin: 'de.undercouch.download'
 
-project.version = "4.1.2" // craftercms version flag
+project.version = "4.1.3" // craftercms version flag
 
 apply from: "global-settings.gradle"
 apply from: "commons.gradle"
@@ -65,7 +65,8 @@ task download() {
 		def performDownload = true
 		getDownloads().each { download ->
 			performDownload = true
-			if (download['name'] == "mongodb" && (!(socialRequired || profileRequired))) {
+			def mongoDownload = ["mongodb", "mongosh", "mongodb-database-tools"].contains(download['name'])
+			if (mongoDownload && (!(socialRequired || profileRequired))) {
 				performDownload = false // Skip mongodb download
 			}
 
@@ -118,7 +119,7 @@ task update() {
 clean() {
 	description 'Cleans the modules.'
 	mustRunAfter update
-	dependsOn = [ "clone" ]
+	dependsOn = [ "clone", "installPomFiles" ]
 	doFirst {
 		getBuildModules().each { module ->
 			println "Cleaning $module"
@@ -163,6 +164,23 @@ task buildBaseEnvs() {
 	}
 }
 
+task buildBom() {
+	description 'Builds the Software Bill of Materials (BOM).'
+	dependsOn = [ "clone", "installPomFiles" ]
+	doFirst {
+		println "Build the Software Bill of Materials (BOM)"
+
+		// TODO Switch to all modules
+		getBuildModules().each { module ->
+			println "Building BOM for $module"
+			buildBom(module)
+		}
+		println "Aggregate BOMs"
+		aggregateBoms("${projectDir}")
+	}
+}
+
+
 task deploy() {
 	description 'Deploys the module artifacts prepares the authoring/delivery environments.'
 	mustRunAfter build
@@ -177,7 +195,7 @@ task deploy() {
 
 task upgrade() {
 	description 'Upgrades all modules and redeploys them'
-	dependsOn = [ "update", "clean", "build", "deploy" ]
+	dependsOn = [ "installPomFiles", "update", "clean", "build", "deploy" ]
 }
 
 task start() {
